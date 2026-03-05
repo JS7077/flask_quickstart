@@ -105,38 +105,34 @@ document.getElementById("reset").addEventListener("click", function (e) {
 });
 // Init Resources
 Object.keys(res).forEach(name => new Resource(name));
+const teamsBut = document.getElementById("TeamsBut");
+teamsBut.setAttribute('data-description', res["Teams"] || "");
+const buttonPress = (e) => {
+    resources.forEach((val, key, map) => {
+        switch (val.name) {
+            case "Teams":
+                val.change(1);
+                break;
+            case "Robots":
+                stor.setItem(val.name, "0");
+                break;
+            default:
+                stor.setItem(val.name, "1");
+        }
+    });
+}
+teamsBut.addEventListener("click", buttonPress);
+teamsBut.hidden = true;
 
 function gameLoop() {
     updateRobotProgress();
     requestAnimationFrame(gameLoop);
     if (
-        document.getElementById("TeamsBut") === null &&
         getAsInt("Robots") > 852 * Math.pow(10, getAsInt("Teams") - 2)
     ) {
-        resources
-            .get("Teams")
-            .obj.insertAdjacentHTML(
-            "beforeend",
-            '<button id=TeamsBut>"We\'re building a team, not a robot"</button>'
-        );
-        const teamsBut = document.getElementById("TeamsBut");
-        teamsBut.setAttribute('data-description', res["Teams"] || "");
-        const buttonPress = (e) => {
-            resources.forEach((val, key, map) => {
-                switch (val.name) {
-                    case "Teams":
-                        val.change(1);
-                        break;
-                    case "Robots":
-                        stor.setItem(val.name, "0");
-                        break;
-                    default:
-                        stor.setItem(val.name, "1");
-                }
-            });
-            teamsBut.remove();
-        };
-        teamsBut.addEventListener("click", buttonPress);
+        document.getElementById("TeamsBut").hidden = false;
+    } else {
+        document.getElementById("TeamsBut").hidden = true;
     }
 }
 document.getElementById("prog").setAttribute('data-description', res["Robots"])
